@@ -1,5 +1,5 @@
 #include <fstream>
-#include "sudokuGrid.h"
+#include "sudokuGrid.hh"
 #include <iostream>
 
 SudokuGrid::SudokuGrid(std::string fileName)
