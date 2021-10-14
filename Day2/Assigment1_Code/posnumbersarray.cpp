@@ -36,10 +36,8 @@ int main()
         for (size_t j = 0;j < y; j++){
             array[i][j] = new unsigned int[z];   
             for (int k = 0; k < z; k++){                    
-                for (int index = 0; index < posNumber; index++){
-                    randomNumber = (std::rand() % posNumber);
-                    array[i][j][k] = randomNumber;
-                }
+                randomNumber = (std::rand() % posNumber);
+                array[i][j][k] = randomNumber;
             }
         }
     }
