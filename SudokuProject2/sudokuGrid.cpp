@@ -4,14 +4,15 @@
 #include <algorithm>
 
 SudokuGrid::SudokuGrid(std::string fileName)
+//==========================================
 {
-    std::cout << "\nIn the constructor of class SudokuGrid!" << std::endl << std::endl;
+    // std::cout << "\nIn the constructor of class SudokuGrid!" << std::endl << std::endl;
 
-    readSudokuFile(fileName);
+    ReadSudokuFile(fileName);
 
-    std::cout << "Current layout of SudokuGrid:\n(Working towards solved SudokuGrid!)\n";
-    std::cout << "====================================\n";
-    printMatrix();
+    std::cout << "\nInitial SudokuGrid:\n";
+    std::cout << "===================\n";
+    PrintMatrix();
 
     A1 =
     {"A1",{1,2,3,4,5,6,7,8,9},0,false,
@@ -743,37 +744,35 @@ SudokuGrid::SudokuGrid(std::string fileName)
         {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
     };
 
-    initilizeSudokuMatrix();
+    InitilizeSudokuSquareMatrix();
+    TraverseSquareMatrixUnits();
 }
 
 SudokuGrid::~SudokuGrid()
+//=======================
 {
-    std::cout << "\nIn the destructor of class SudokuGrid!" << std::endl << std::endl;
+    // std::cout << "\nIn the destructor of class SudokuGrid!" << std::endl << std::endl;
 
-    /*
-    setSquareValue(squarematrix[2][0],4);
-    setSquareValue(squarematrix[0][1],1);
-    setSquareValue(squarematrix[1][2],9);
-    setSquareValue(squarematrix[1][7],6);
-    setSquareValue(squarematrix[2][4],2);
-    setSquareValue(squarematrix[2][5],9);
-    setSquareValue(squarematrix[2][3],6);
-    */
+    if (SudokuGridSolved()){
+        std::cout << "\nThe SudokuGrid solved!!!";
+    }else
+    {
+        std::cout << "\nThe SudokuGrid NOT solved...";
+    }
 
-    SudokuSolutionSearch();
-
-    std::cout << "Current layout of SquareMatrix:\n(Working values towards solution of SudokuGrid)\n";
-    std::cout << "========================================\n";
-    printsquareMatrixValues();
+    std::cout << "\n\nLayout of the SudokuGrid:\n";
+    std::cout << "=========================\n";
+    PrintsquareMatrixValues();
 
     std::cout << std::endl;
 
-    std::cout << "Current layout of SquareMatrix:\n(Working possiblevalues towards solution of SudokuGrid)\n";
-    std::cout << "========================================\n";
-    printsquareMatrixHypos();
+    std::cout << "Layout of (Possible Remainig Guesses) for the SudokuGrid:\n";
+    std::cout << "=========================================================\n";
+    PrintsquareMatrixHypos();
 }
 
-void SudokuGrid::readSudokuFile(std::string filename)
+void SudokuGrid::ReadSudokuFile(std::string filename)
+//===================================================
 {
     int row, column = 0;
     int charcount = 0;
@@ -806,7 +805,8 @@ void SudokuGrid::readSudokuFile(std::string filename)
     myFile.close();
 }
 
-void SudokuGrid::initilizeSudokuMatrix()
+void SudokuGrid::InitilizeSudokuSquareMatrix()
+//============================================
 {
     for (size_t row = 0; row < N; row++)
     {
@@ -814,18 +814,77 @@ void SudokuGrid::initilizeSudokuMatrix()
         {
             if (SudokuGrid::grid.matrix[row][column] != 0)
             {
-                setInitialSquareValue(SudokuGrid::squarematrix[row][column],SudokuGrid::grid.matrix[row][column]);
+                SetInitialSquareValue(SudokuGrid::squarematrix[row][column],SudokuGrid::grid.matrix[row][column]);
+            }
+        }
+    }
+
+    for (size_t row = 0; row < N; row++)
+    {
+        for (size_t column = 0; column < N; column++)
+        {
+            if (squarematrix[row][column]->value == 0)
+            {
+                InitilizeSquareUnits(squarematrix[row][column]);
             }
         }
     }
 }
 
-void SudokuGrid::setSquareValue(squareptr_t square, int value)
+void SudokuGrid::SetInitialSquareValue(squareptr_t square, int value)
+//===================================================================
+{
+    square->value = value;
+    square->possiblevalues.clear();
+    square->possiblevalues.push_back(square->value);
+    square->analysefinalized = true;
+
+    for (size_t peernr = 0; peernr < NrOfPeers; peernr++)
+    {
+        square->peers[peernr]->possiblevalues.erase(
+            std::remove(square->peers[peernr]->possiblevalues.begin(),
+                        square->peers[peernr]->possiblevalues.end(),
+                        square->value),
+                        square->peers[peernr]->possiblevalues.end());   
+    }
+}
+
+void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
+//========================================================
+{
+
+    for (size_t i = 0; i < 9; i++)
+    {
+        if (square->unit1_row[i]->possiblevalues.size() == 1)
+        {
+            SetSquareValue(square->unit1_row[i],*square->unit1_row[i]->possiblevalues.begin());
+        }
+    }
+
+    for (size_t i = 0; i < 9; i++)
+    {
+        if (square->unit2_colum[i]->possiblevalues.size() == 1)
+        {
+            SetSquareValue(square->unit2_colum[i],*square->unit2_colum[i]->possiblevalues.begin());
+        }
+    }
+
+    for (size_t i = 0; i < 9; i++)
+   {
+       if (square->unit3_box[i]->possiblevalues.size() == 1)
+       {
+           SetSquareValue(square->unit3_box[i],*square->unit3_box[i]->possiblevalues.begin());
+       }
+   }
+}
+
+void SudokuGrid::SetSquareValue(squareptr_t square, int value)
+//============================================================
 {
     if (square->analysefinalized != true)
     {
-        std::cout << "inside setSquareValue for ID: " << square->ID << std::endl;
-        std::cout << "inside setSquarevalue using value: " << value << std::endl;
+        // std::cout << "inside setSquareValue for ID: " << square->ID << std::endl;
+        // std::cout << "inside setSquarevalue using value: " << value << std::endl;
 
         SudokuGrid::vectorint_t::iterator hypoToRemove;
         square->value = value;
@@ -846,43 +905,112 @@ void SudokuGrid::setSquareValue(squareptr_t square, int value)
             }
         }
     }
+
+    /*
+    std::cout << "\nCurrent layout of SquareMatrix:\n(Working values towards solution of SudokuGrid)\n";
+    std::cout << "========================================\n";
+    PrintsquareMatrixValues();
+
+    std::cout << std::endl;
+
+    std::cout << "Current layout of SquareMatrix:\n(Working possiblevalues towards solution of SudokuGrid)\n";
+    std::cout << "========================================\n";
+    PrintsquareMatrixHypos();
+    */
 }
 
-void SudokuGrid::setInitialSquareValue(squareptr_t square, int value)
+void SudokuGrid::TraverseSquareMatrixUnits()
+//==========================================
 {
-    // SudokuGrid::vectorint_t::iterator hypoToRemove;
-    square->value = value;
-    // hypoToRemove = square->possiblevalues.begin() + (square->value - 1);
-    square->possiblevalues.clear();
-    square->possiblevalues.push_back(square->value);
-    square->analysefinalized = true;
-
-    /* std::cout << "Value of A1:s peerptr A2: " << A1.peers[0] << std::endl;
-    std::cout << "Value of A1:s peerptr A3: " << A1.peers[1] << std::endl;
-    std::cout << "Value of A1:s peerptr A4: " << A1.peers[2] << std::endl;
-    std::cout << "Value of A1:s peerptr A5: " << A1.peers[3] << std::endl;
-    std::cout << "Value of A1:s peerptr A6: " << A1.peers[4] << std::endl;
-    std::cout << "Value of A1:s peerptr A7: " << A1.peers[5] << std::endl;
-    std::cout << "Value of A1:s peerptr A8: " << A1.peers[6] << std::endl;
-    std::cout << "Value of A1:s peerptr A9: " << A1.peers[7] << std::endl;
-    */
-
-    for (size_t peernr = 0; peernr < NrOfPeers; peernr++)
+    for (size_t row = 0; row < N; row++)
     {
-        //hypoToRemove = SudokuGrid::squarematrix[0][0]->peers[0]->possiblevalues.begin();
-        //SudokuGrid::squarematrix[0][0]->peers[0]->possiblevalues.erase(hypoToRemove);
-        square->peers[peernr]->possiblevalues.erase(
-            std::remove(square->peers[peernr]->possiblevalues.begin(),
-                        square->peers[peernr]->possiblevalues.end(),
-                        square->value),
-                        square->peers[peernr]->possiblevalues.end());   
+        for (size_t column = 0; column < N; column++)
+        {
+            TraverseSquareUnits(squarematrix[row][column]);
+        }
     }
 }
 
-void SudokuGrid::printMatrix()
-{
+bool SudokuGrid::SudokuGridSolved()
+//================================
+{   
+    bool Solved = true;
 
-    // print the sudoku grid
+    for (size_t row = 0; row < N; row++)
+    {
+        for (size_t column = 0; column < N; column++)
+        {
+            if ( squarematrix[row][column]->analysefinalized == false)
+            {
+                Solved = false;
+                break;
+            }
+        }
+    }
+    return Solved;
+}
+
+void SudokuGrid::TraverseSquareUnits(squareptr_t square)
+//================================================
+{
+    TraverseUnit(square->unit1_row);
+    TraverseUnit(square->unit2_colum);
+    TraverseUnit(square->unit3_box);
+}
+
+void SudokuGrid::TraverseUnit(squareptr_t *unit)
+//==============================================
+{
+    SudokuGrid:vectorint_t Temp1Vec ={}, Tmp2Vec = {};
+    // int dummy;
+
+    for (size_t i = 0; i < 9; i++)
+    {
+        if (unit[i]->value == 0)
+        {
+            Temp1Vec.insert(Temp1Vec.begin(),
+            unit[i]->possiblevalues.begin(),
+            unit[i]->possiblevalues.end());
+            // std::cout << "Id: " << unit[i]->ID << "\n";
+        }
+    }
+
+    for (auto i = Temp1Vec.cbegin(); i < Temp1Vec.cend(); i++)
+    {
+        if (std::count(Temp1Vec.begin(), Temp1Vec.end(), *i)== 1)
+        {
+            Tmp2Vec.push_back(*i);
+        }
+    }
+
+    // std::cout << "\nContent of concatenated possible row values for IDs : \n";
+    // for (auto i = Temp1Vec.cbegin(); i < Temp1Vec.cend(); i++)
+    // {
+    //     std::cout << *i << " ";
+    // }
+
+    // std::cout << "\nContent of traversed concatenated possible row values for IDs : \n";
+    for (auto i = Tmp2Vec.cbegin(); i < Tmp2Vec.cend(); i++)
+    {
+        // std::cout << *i << " ";
+
+        for (size_t j = 0; j < 9; j++)
+        {
+            if (std::count(unit[j]->possiblevalues.begin(),
+                           unit[j]->possiblevalues.end(), *i) == 1)
+            {
+                SetSquareValue(unit[j], *i);
+            }
+        }
+    }
+
+    // std::cout << "\n";
+    // std:: cin >> dummy;
+}
+
+void SudokuGrid::PrintMatrix()
+//============================
+{
 
     for (int row = 0; row < N; row++)
     {
@@ -902,11 +1030,10 @@ void SudokuGrid::printMatrix()
     }
 }
 
-void SudokuGrid::printsquareMatrixValues()
+void SudokuGrid::PrintsquareMatrixValues()
+//========================================
 {
-
-    // print the sudoku squaregrid
-
+    
     for (int row = 0; row < N; row++)
     {
         for (int col = 0; col < N; col++)
@@ -914,6 +1041,7 @@ void SudokuGrid::printsquareMatrixValues()
             if (col == 3 || col == 6)
                 std::cout << " | ";
             std::cout << SudokuGrid::squarematrix[row][col]->value << " ";
+            // std::cout << SudokuGrid::squarematrix[row][col]->analysefinalized << " ";
         }
         if (row == 2 || row == 5)
         {
@@ -925,10 +1053,9 @@ void SudokuGrid::printsquareMatrixValues()
     }
 }
 
-void SudokuGrid::printsquareMatrixHypos()
+void SudokuGrid::PrintsquareMatrixHypos()
+//=======================================
 {
-
-    // print the sudoku squaregrid
 
     for (int row = 0; row < N; row++)
     {
@@ -953,48 +1080,6 @@ void SudokuGrid::printsquareMatrixHypos()
             std::cout << std::endl;
         }
     }
-}
-
-void SudokuGrid::TraverseSquareUnits(squareptr_t square){
-
-    for (size_t i = 0; i < 9; i++)
-    {
-        if (square->unit1_row[i]->possiblevalues.size() == 1)
-        {
-            setSquareValue(square->unit1_row[i],*square->unit1_row[i]->possiblevalues.begin());
-        }
-    }
-
-    for (size_t i = 0; i < 9; i++)
-    {
-        if (square->unit2_colum[i]->possiblevalues.size() == 1)
-        {
-            setSquareValue(square->unit2_colum[i],*square->unit2_colum[i]->possiblevalues.begin());
-        }
-    }
-
-    for (size_t i = 0; i < 9; i++)
-   {
-       if (square->unit3_box[i]->possiblevalues.size() == 1)
-       {
-           setSquareValue(square->unit3_box[i],*square->unit3_box[i]->possiblevalues.begin());
-       }
-   }
-}
-
-bool SudokuGrid::SudokuSolutionSearch ()
-{
-    for (size_t row = 0; row < N; row++)
-    {
-        for (size_t column = 0; column < N; column++)
-        {
-            if (squarematrix[row][column]->value == 0)
-            {
-                TraverseSquareUnits(squarematrix[row][column]);
-            }
-        }
-    }
-
-    return true;
+    std::cout << std::endl;
 }
 

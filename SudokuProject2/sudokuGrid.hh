@@ -10,10 +10,6 @@ class SudokuGrid{
 private:
 
     typedef std::vector<int> vectorint_t;
-    typedef std::vector<bool> vectorbool_t;
-    typedef std::vector<std::string> vectorstr_t;
-    typedef std::vector<char> vectorchar_t;
-    typedef std::vector<std::vector<char>> vector2D_t;
 
     struct grid{
         size_t matrix[N][N];
@@ -40,22 +36,18 @@ private:
     grid_t grid;
     //=====================
 
-    vectorint_t row_values(int row);
-    vectorint_t column_values(int column);
-    vectorint_t squere_values(int squere);
-    // int squere (int row, int colum);
-    void initilizeSudokuMatrix();
-    void readSudokuFile (std::string filename);
-    void printMatrix();
-    void printsquareMatrixValues();
-    void printsquareMatrixHypos();
-    void setSquareValue(squareptr_t square, int value);
-    void setInitialSquareValue(squareptr_t square, int value);
+    void InitilizeSudokuSquareMatrix();
+    void ReadSudokuFile (std::string filename);
+    bool SudokuGridSolved();
+    void PrintMatrix();
+    void PrintsquareMatrixValues();
+    void PrintsquareMatrixHypos();
+    void SetSquareValue(squareptr_t square, int value);
+    void SetInitialSquareValue(squareptr_t square, int value);
+    void InitilizeSquareUnits(squareptr_t square);
+    void TraverseSquareMatrixUnits();
     void TraverseSquareUnits(squareptr_t square);
-    bool SudokuSolutionSearch();
-
-    vectorchar_t rows{'A',9};
-    vector2D_t RowsColumsVector = {{'A','B',3,4},{1,2,3,4},{1,2,3,4,5}};
+    void TraverseUnit(squareptr_t *unit);
 
    square_t
         A1,A2,A3,A4,A5,A6,A7,A8,A9,
@@ -86,10 +78,6 @@ private:
     public:
         SudokuGrid(std::string filename);
         ~SudokuGrid();
-        // void printGrid();
-        // void assign(int row,int column, int value = 0);
-        // void eliminate();
-        // void print();
 };
 
 #endif // SUDOKUGRID_H
