@@ -766,8 +766,8 @@ SudokuGrid::~SudokuGrid()
 
     std::cout << std::endl;
 
-    std::cout << "Layout of (Possible Remainig Guesses) for the SudokuGrid:\n";
-    std::cout << "=========================================================\n";
+    std::cout << "Layout of (Possible Remaining Guesses) for the SudokuGrid:\n";
+    std::cout << "==========================================================\n";
     PrintsquareMatrixHypos();
 }
 
