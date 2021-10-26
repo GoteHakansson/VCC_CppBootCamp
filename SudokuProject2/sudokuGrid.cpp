@@ -2,6 +2,7 @@
 #include "sudokuGrid.hh"
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 
 SudokuGrid::SudokuGrid(std::string fileName)
 //==========================================
@@ -170,7 +171,7 @@ SudokuGrid::SudokuGrid(std::string fileName)
 
     B9 =
     {"B9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9,&A9,
+        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&A9,&C9,
         &D9,&E9,&F9,&G9,&H9,&I9,&A7,&A8,&C7,&C8},
         {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
         {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
@@ -744,8 +745,30 @@ SudokuGrid::SudokuGrid(std::string fileName)
         {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
     };
 
+    //Start solution measurement for constraint_propagation timer:
+    //=====================================================
+    // startTimeConstrPropSolving = std::chrono::high_resolution_clock::now();
+    //=====================================================
+
+    // Performs Rule 1 of Constraint Propagation:
+    //(1) If a square has only one possible value, then eliminate that value from the square's peers.
+    //============================
     InitilizeSudokuSquareMatrix();
-    TraverseSquareMatrixUnits();
+    //============================
+
+    // Performs Rule 2 of Constraint Propagation:
+    //(2) If a unit has only one possible place for a value, then put the value there.
+    //================================ 
+    TraverseSudokuSquareMatrixUnits();
+    //================================
+
+    //Stop solution measurement for constraint_propagation timer:
+    //=====================================================
+    // stopTimeConstrPropSolving = std::chrono::high_resolution_clock::now();
+    //=====================================================
+
+    //Calulate duration of constraint_propagation calculations (microseconds). 
+    //========================================================================
 }
 
 SudokuGrid::~SudokuGrid()
@@ -754,20 +777,73 @@ SudokuGrid::~SudokuGrid()
     // std::cout << "\nIn the destructor of class SudokuGrid!" << std::endl << std::endl;
 
     if (SudokuGridSolved()){
-        std::cout << "\nThe SudokuGrid solved!!!";
+        //=========================================
+        // Contraint propagation solved the puzze.
+        //=========================================
+        std::cout << "\nThe SudokuGrid was solved using Constraint Propagation!\n";
+
+        //===============================
+        // Time spent to solved the puzze.
+        //===============================
+        // auto durationCP = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeConstrPropSolving - startTimeConstrPropSolving);
+        // std::cout << "Time of Constraint Propagation execution: " << durationCP.count() << " microseconds\n" << std::endl;
     }else
     {
-        std::cout << "\nThe SudokuGrid NOT solved...";
+        // Start solution measurement for brute force timer:
+        //=====================================================
+        // startTimeBruteForcelving = std::chrono::high_resolution_clock::now();
+        //=====================================================
+
+        //================
+        applyBruteForce();
+        //================
+
+        // Stop solution measurement for brute force timer:
+        //=================================================
+        // stopTimeBruteForcelving = std::chrono::high_resolution_clock::now();
+        //=================================================
+
+        if (SudokuGridSolved()){
+            //========================================
+            // Search (brute force) solved the puzzle.
+            //========================================
+            std::cout << "\nThe SudokuGrid was solved using Brute Force!\n";
+
+            //===============================
+            // Time spent to solved the puzze.
+            //===============================
+            // auto durationCP = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeConstrPropSolving - startTimeConstrPropSolving);
+            // std::cout << "Time of Constraint Propagation execution: " << durationCP.count() << " microseconds" << std::endl;
+            // auto durationBF = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeBruteForcelving - startTimeBruteForcelving);
+            // std::cout << "Time of Bruce Force execution: " << durationBF.count() << " microseconds" << std::endl;
+
+        } else {
+            //===============================================
+            std::cout << "\nThe SudokuGrid is NOT SOLVABLE!";
+            //===============================================
+            //===============================================
+            // Time spent when trying to to solved the puzze.
+            //===============================================
+            // auto durationCP = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeConstrPropSolving - startTimeConstrPropSolving);
+            // std::cout << "Time of Constraint Propagation execution: " << durationCP.count() << " microseconds\n" << std::endl;
+            // auto durationBF = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeBruteForcelving - startTimeBruteForcelving);
+            // std::cout << "Time of Bruce Force execution: " << durationBF.count() << " microseconds\n" << std::endl;
+        }
     }
 
-    std::cout << "\n\nLayout of the SudokuGrid:\n";
-    std::cout << "=========================\n";
+    //===================================================================
+    // Print out the result(s) of the ambition to solve the sudoku puzzle.
+    //===================================================================
+
+    std::cout << "\n\nLayout of the produced (solved) SudokuGrid puzzle:\n";
+    std::cout << "=======================================================\n";
     PrintsquareMatrixValues();
 
     std::cout << std::endl;
 
-    std::cout << "Layout of (Possible Remaining Guesses) for the SudokuGrid:\n";
-    std::cout << "==========================================================\n";
+    std::cout << "Layout of the (final) hypothesis for the SudokuGrid puzzle:\n";
+    std::cout << "(Possible Remaining Guesses After Constraint Prpagation)\n";
+    std::cout << "=============================================================\n";
     PrintsquareMatrixHypos();
 }
 
@@ -829,24 +905,45 @@ void SudokuGrid::InitilizeSudokuSquareMatrix()
             }
         }
     }
+
 }
 
 void SudokuGrid::SetInitialSquareValue(squareptr_t square, int value)
 //===================================================================
 {
-    square->value = value;
-    square->possiblevalues.clear();
-    square->possiblevalues.push_back(square->value);
-    square->analysefinalized = true;
+    // int dummy;
 
-    for (size_t peernr = 0; peernr < NrOfPeers; peernr++)
+    if (!square->analysefinalized)
     {
-        square->peers[peernr]->possiblevalues.erase(
-            std::remove(square->peers[peernr]->possiblevalues.begin(),
-                        square->peers[peernr]->possiblevalues.end(),
-                        square->value),
-                        square->peers[peernr]->possiblevalues.end());   
+        square->value = value;
+        square->possiblevalues.clear();
+        square->possiblevalues.push_back(square->value);
+        square->analysefinalized = true;
+
+        for (size_t peernr = 0; peernr < NrOfPeers; peernr++)
+        {
+            square->peers[peernr]->possiblevalues.erase(
+                std::remove(square->peers[peernr]->possiblevalues.begin(),
+                            square->peers[peernr]->possiblevalues.end(),
+                            square->value),square->peers[peernr]->possiblevalues.end());
+        }
     }
+
+    /*
+    std::cout << "\nCurrent layout of SquareMatrix:\n(Working values towards solution of SudokuGrid)\n";
+    std::cout << "========================================\n";
+    PrintsquareMatrixValues();
+
+    std::cout << "ID: " << square->ID << "\n";
+    std::cout << std::endl;
+
+    std::cout << "Current layout of SquareMatrix Hypotesis:\n(Working possiblevalues towards solution of SudokuGrid)\n";
+    std::cout << "==========================================\n";
+    PrintsquareMatrixHypos();
+
+    std::cin >> dummy;
+    */
+
 }
 
 void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
@@ -876,11 +973,14 @@ void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
            SetSquareValue(square->unit3_box[i],*square->unit3_box[i]->possiblevalues.begin());
        }
    }
+
 }
 
 void SudokuGrid::SetSquareValue(squareptr_t square, int value)
 //============================================================
 {
+    // int dummy;
+
     if (square->analysefinalized != true)
     {
         // std::cout << "inside setSquareValue for ID: " << square->ID << std::endl;
@@ -906,20 +1006,22 @@ void SudokuGrid::SetSquareValue(squareptr_t square, int value)
         }
     }
 
-    /*
+/*
     std::cout << "\nCurrent layout of SquareMatrix:\n(Working values towards solution of SudokuGrid)\n";
     std::cout << "========================================\n";
     PrintsquareMatrixValues();
 
     std::cout << std::endl;
 
-    std::cout << "Current layout of SquareMatrix:\n(Working possiblevalues towards solution of SudokuGrid)\n";
-    std::cout << "========================================\n";
+    std::cout << "Current layout of SquareMatrix Hypotesis:\n(Working possiblevalues towards solution of SudokuGrid)\n";
+    std::cout << "==========================================\n";
     PrintsquareMatrixHypos();
-    */
+
+    std::cin >> dummy;
+*/
 }
 
-void SudokuGrid::TraverseSquareMatrixUnits()
+void SudokuGrid::TraverseSudokuSquareMatrixUnits()
 //==========================================
 {
     for (size_t row = 0; row < N; row++)
@@ -971,7 +1073,6 @@ void SudokuGrid::TraverseUnit(squareptr_t *unit)
             Temp1Vec.insert(Temp1Vec.begin(),
             unit[i]->possiblevalues.begin(),
             unit[i]->possiblevalues.end());
-            // std::cout << "Id: " << unit[i]->ID << "\n";
         }
     }
 
@@ -983,16 +1084,18 @@ void SudokuGrid::TraverseUnit(squareptr_t *unit)
         }
     }
 
-    // std::cout << "\nContent of concatenated possible row values for IDs : \n";
+    /*
+    std::cout << "\nContent of concatenated possible row values for IDs : \n";
     // for (auto i = Temp1Vec.cbegin(); i < Temp1Vec.cend(); i++)
-    // {
-    //     std::cout << *i << " ";
-    // }
+    {
+        std::cout << *i << " ";
+    }
+    */
 
     // std::cout << "\nContent of traversed concatenated possible row values for IDs : \n";
     for (auto i = Tmp2Vec.cbegin(); i < Tmp2Vec.cend(); i++)
     {
-        // std::cout << *i << " ";
+        // std::cout << *i << " \n";
 
         for (size_t j = 0; j < 9; j++)
         {
@@ -1071,7 +1174,7 @@ void SudokuGrid::PrintsquareMatrixHypos()
             {
                 std::cout << *i;
             }
-            std::cout << "\t ";
+            std::cout << "\t";
         }
         std::cout << "\n";
 
@@ -1083,3 +1186,105 @@ void SudokuGrid::PrintsquareMatrixHypos()
     std::cout << std::endl;
 }
 
+//=================================================
+// Code Implementing Bruce Force
+//=================================================
+
+bool SudokuGrid::isPresentInCol(int col, int num)
+//-----------------------------------------------
+{ // check whether num is present in col or not
+    for (int row = 0; row < N; row++)
+        if (squarematrix[row][col]->value == num)
+        {
+            return true;
+        }
+    return false;
+}
+
+bool SudokuGrid::isPresentInRow(int row, int num)
+//-----------------------------------------------
+{ // check whether num is present in row or not
+    for (int col = 0; col < N; col++)
+        if (squarematrix[row][col]->value == num)
+        {
+            return true;
+        }
+    return false;
+}
+
+bool SudokuGrid::isPresentInBox(int boxStartRow, int boxStartCol, int num)
+//------------------------------------------------------------------------
+{ // check whether num is present in 3x3 box or not
+    for (int row = 0; row < 3; row++)
+        for (int col = 0; col < 3; col++)
+            if (squarematrix[row + boxStartRow][col + boxStartCol]->value == num)
+            {
+                return true;
+            }
+    return false;
+}
+
+void SudokuGrid::printBruceForceSudokuGrid()
+//-----------------------------------------
+{ // print the sudoku grid after solve
+    for (int row = 0; row < N; row++)
+    {
+        for (int col = 0; col < N; col++)
+        {
+            if (col == 3 || col == 6)
+                std::cout << " | ";
+            std::cout << squarematrix[row][col]->value << " ";
+        }
+        if (row == 2 || row == 5)
+        {
+            std::cout << std::endl;
+            for (int i = 0; i < N; i++)
+                std::cout << "---";
+        }
+        std::cout << std::endl;
+    }
+}
+
+bool SudokuGrid::findEmptyPlace(int &row, int &col)
+//------------------------------------------------
+{ // get empty location and update row and column
+    for (row = 0; row < N; row++)
+        for (col = 0; col < N; col++)
+            if (squarematrix[row][col]->value == 0) // marked with 0 is empty
+            {
+                return true;
+            }
+    return false;
+}
+
+bool SudokuGrid::isValidPlace(int row, int col, int num)
+//------------------------------------------------------
+{
+    // when item not found in col, row and current 3x3 box
+    return !isPresentInRow(row, num) && !isPresentInCol(col, num) &&
+           !isPresentInBox(row - row % 3, col - col % 3, num);
+}
+
+bool SudokuGrid::applyBruteForce()
+//=================================
+{
+    int row, col;
+    if (!findEmptyPlace(row, col))
+        return true; // when all places are filled
+    for (int num = 1; num <= 9; num++)
+    { // valid numbers are 1 - 9
+        if (isValidPlace(row, col, num))
+        { // check validation, if yes, put the number in the grid
+            squarematrix[row][col]->value = num;
+            squarematrix[row][col]->analysefinalized = true;
+            if (applyBruteForce()) // recursively go for other rooms in the grid
+                return true;
+            SudokuGrid::squarematrix[row][col]->value = 0; // turn to unassigned space when conditions are not satisfied
+        }
+    }
+    return false;
+}
+
+//=================================================
+// End Of Code Implementing Bruce Force
+//=================================================
