@@ -4,12 +4,13 @@
 #include <algorithm>
 #include <chrono>
 
-SudokuGrid::SudokuGrid(std::string fileName)
-//==========================================
+SudokuGrid::SudokuGrid(std::string Sudokustr)
+//==============================================
 {
     // std::cout << "\nIn the constructor of class SudokuGrid!" << std::endl << std::endl;
 
-    ReadSudokuFile(fileName);
+
+    ReadSudokuStr(Sudokustr);
 
     std::cout << "\nInitial SudokuGrid:\n";
     std::cout << "===================\n";
@@ -780,7 +781,7 @@ SudokuGrid::~SudokuGrid()
         //=========================================
         // Contraint propagation solved the puzze.
         //=========================================
-        std::cout << "\nThe SudokuGrid was solved using Constraint Propagation!\n";
+        std::cout << "The SudokuGrid was solved using Constraint Propagation!\n";
 
         //===============================
         // Time spent to solved the puzze.
@@ -807,7 +808,7 @@ SudokuGrid::~SudokuGrid()
             //========================================
             // Search (brute force) solved the puzzle.
             //========================================
-            std::cout << "\nThe SudokuGrid was solved using Brute Force!\n";
+            std::cout << "The SudokuGrid was solved using Brute Force!\n";
 
             //===============================
             // Time spent to solved the puzze.
@@ -819,7 +820,7 @@ SudokuGrid::~SudokuGrid()
 
         } else {
             //===============================================
-            std::cout << "\nThe SudokuGrid is NOT SOLVABLE!";
+            std::cout << "The SudokuGrid is NOT SOLVABLE!\n";
             //===============================================
             //===============================================
             // Time spent when trying to to solved the puzze.
@@ -842,43 +843,34 @@ SudokuGrid::~SudokuGrid()
     std::cout << std::endl;
 
     std::cout << "Layout of the (final) hypothesis for the SudokuGrid puzzle:\n";
-    std::cout << "(Possible Remaining Guesses After Constraint Prpagation)\n";
+    std::cout << "(Possible Remaining Guesses After Constraint Propagation)\n";
     std::cout << "=============================================================\n";
     PrintsquareMatrixHypos();
 }
 
-void SudokuGrid::ReadSudokuFile(std::string filename)
+void SudokuGrid::ReadSudokuStr(std::string SudokuStr)
 //===================================================
 {
-    int row, column = 0;
-    int charcount = 0;
-    std::string line = "";
-    std::ifstream myFile;
     int checkLinePos = 0;
 
-    myFile.open(filename);
-
-    while (myFile.good())
+    for (size_t gridRow = 0; gridRow < N; gridRow++)
     {
-        for (size_t row = 0; row < N; row++)
+        for (size_t gridColumn = 0; gridColumn < N; gridColumn++)
         {
-            column = 0;
-            checkLinePos = 0;
-            getline(myFile, line, '\n');
-            while (line[checkLinePos] != '\0')
+            if (SudokuStr[checkLinePos] == '.')
             {
-                if (line[checkLinePos] != ',')
-                {
-                    grid.matrix[row][column] = line[checkLinePos] - '0';
-                    column++;
-                    charcount++;
-                }
-                checkLinePos++;
+                grid.matrix[gridRow][gridColumn] = 0;
+                // std::cout << "Read '.': " << line[checkLinePos] << std::endl;
+                // std::cout << "Read character: " << line[checkLinePos] - '0' << std::endl;
             }
+            else
+            {
+                grid.matrix[gridRow][gridColumn] = SudokuStr[checkLinePos] - '0';
+                // std::cout << "Read character: " << line[checkLinePos] - '0' << std::endl;
+            }
+            checkLinePos++;
         }
     }
-
-    myFile.close();
 }
 
 void SudokuGrid::InitilizeSudokuSquareMatrix()
@@ -1131,6 +1123,7 @@ void SudokuGrid::PrintMatrix()
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
 void SudokuGrid::PrintsquareMatrixValues()

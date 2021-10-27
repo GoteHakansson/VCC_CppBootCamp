@@ -39,7 +39,7 @@ private:
 
     void InitilizeSudokuSquareMatrix();
     void TraverseSudokuSquareMatrixUnits();
-    void ReadSudokuFile (std::string filename);
+    void ReadSudokuStr(std::string SudokuStr);
     bool SudokuGridSolved();
     void PrintMatrix();
     void PrintsquareMatrixValues();
@@ -84,7 +84,7 @@ private:
     };
 
     public:
-        SudokuGrid(std::string filename);
+        SudokuGrid(std::string Sudukostr);
         ~SudokuGrid();
         // std::chrono::high_resolution_clock::time_point startTimeConstrPropSolving;
         // std::chrono::high_resolution_clock::time_point stopTimeConstrPropSolving;
