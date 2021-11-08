@@ -45,7 +45,7 @@ private:
     void PrintsquareMatrixValues();
     void PrintsquareMatrixHypos();
     void SetSquareValue(squareptr_t square, int value);
-    void SetInitialSquareValue(squareptr_t square, int value);
+    void SetInitialSquareValue(squareptr_t &square, int value);
     void InitilizeSquareUnits(squareptr_t square);
     void TraverseSquareUnits(squareptr_t square);
     void TraverseUnit(squareptr_t *unit);
@@ -56,6 +56,8 @@ private:
     bool findEmptyPlace(int &row, int &col);
     bool isValidPlace(int row, int col, int num);
     bool applyBruteForce();
+    void InitilizeSquare(std::string ID, int row, int column);
+    void SolvingSudoku();
 
    square_t
         A1,A2,A3,A4,A5,A6,A7,A8,A9,
@@ -84,12 +86,9 @@ private:
     };
 
     public:
-        SudokuGrid(std::string Sudukostr);
+        SudokuGrid();
         ~SudokuGrid();
-        // std::chrono::high_resolution_clock::time_point startTimeConstrPropSolving;
-        // std::chrono::high_resolution_clock::time_point stopTimeConstrPropSolving;
-        // std::chrono::high_resolution_clock::time_point startTimeBruteForcelving;
-        // std::chrono::high_resolution_clock::time_point stopTimeBruteForcelving;
+        void SolveSudoku(std::string Sudukostr);
 };
 
 #endif // SUDOKUGRID_H

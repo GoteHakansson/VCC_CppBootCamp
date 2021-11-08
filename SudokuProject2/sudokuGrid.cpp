@@ -4,831 +4,51 @@
 #include <algorithm>
 #include <chrono>
 
-SudokuGrid::SudokuGrid(std::string Sudokustr)
-//==============================================
+void SudokuGrid::SolveSudoku(std::string Sudukostr)
+//==================================================
 {
-    // std::cout << "\nIn the constructor of class SudokuGrid!" << std::endl << std::endl;
-
-
-    ReadSudokuStr(Sudokustr);
-
+    ReadSudokuStr(Sudukostr);
     std::cout << "\nInitial SudokuGrid:\n";
     std::cout << "===================\n";
     PrintMatrix();
 
-    A1 =
-    {"A1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9,&B1,&C1,
-        &D1,&E1,&F1,&G1,&H1,&I1,&B2,&B3,&C2,&C3},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    A2 =
-    {"A2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A3,&A4,&A5,&A6,&A7,&A8,&A9,&B2,&C2,
-        &D2,&E2,&F2,&G2,&H2,&I2,&B1,&B3,&C1,&C3},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    A3 =
-    {"A3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A4,&A5,&A6,&A7,&A8,&A9,&B3,&C3,
-        &D3,&E3,&F3,&G3,&H3,&I3,&B1,&B2,&C1,&C2},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    A4 =
-    {"A4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A3,&A5,&A6,&A7,&A8,&A9,&B4,&C4,
-        &D4,&E4,&F4,&G4,&H4,&I4,&B5,&B6,&C5,&C6},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    A5 =
-    {"A5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A3,&A4,&A6,&A7,&A8,&A9,&B5,&C5,
-        &D5,&E5,&F5,&G5,&H5,&I5,&B4,&B6,&C4,&C6},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    A6 =
-    {"A6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A3,&A4,&A5,&A7,&A8,&A9,&B6,&C6,
-        &D6,&E6,&F6,&G6,&H6,&I6,&B4,&B5,&C4,&C5},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    A7 =
-    {"A7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A8,&A9,&B7,&C7,
-        &D7,&E7,&F7,&G7,&H7,&I7,&B8,&B9,&C8,&C9},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    A8 =
-    {"A8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A9,&B8,&C8,
-        &D8,&E8,&F8,&G8,&H8,&I8,&B7,&B9,&C7,&C9},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-
-    };
-
-    A9 =
-    {"A9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&B9,&C9,
-        &D9,&E9,&F9,&G9,&H9,&I9,&B7,&B8,&C7,&C8},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    B1 =
-    {"B1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9,&A1,&C1,
-        &D1,&E1,&F1,&G1,&H1,&I1,&A2,&A3,&C2,&C3},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    B2 =
-    {"B2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B3,&B4,&B5,&B6,&B7,&B8,&B9,&A2,&C2,
-        &D2,&E2,&F2,&G2,&H2,&I2,&A1,&A3,&C1,&C3},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    B3 =
-    {"B3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B4,&B5,&B6,&B7,&B8,&B9,&A3,&C3,
-        &D3,&E3,&F3,&G3,&H3,&I3,&A1,&A2,&C1,&C2},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    B4 =
-    {"B4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B5,&B6,&B7,&B8,&B9,&A4,&C4,
-        &D4,&E4,&F4,&G4,&H4,&I4,&A5,&A6,&C5,&C6},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    B5 =
-    {"B5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B4,&B6,&B7,&B8,&B9,&A5,&C5,
-        &D5,&E5,&F5,&G5,&H5,&I5,&A4,&A6,&C4,&C6},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    B6 =
-    {"B6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B4,&B5,&B7,&B8,&B9,&A6,&C6,
-        &D6,&E6,&F6,&G6,&H6,&I6,&A4,&A5,&C4,&C5},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    B7 =
-    {"B7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B8,&B9,&A7,&C7,
-        &D7,&E7,&F7,&G7,&H7,&I7,&A8,&A9,&C8,&C9},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    B8 =
-    {"B8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B9,&A8,&C8,
-        &D8,&E8,&F8,&G8,&H8,&I8,&A7,&A9,&C7,&C9},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    B9 =
-    {"B9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&A9,&C9,
-        &D9,&E9,&F9,&G9,&H9,&I9,&A7,&A8,&C7,&C8},
-        {&B1,&B2,&B3,&B4,&B5,&B6,&B7,&B8,&B9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    C1 =
-    {"C1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9,&A1,&B1,
-        &D1,&E1,&F1,&G1,&H1,&I1,&A2,&A3,&B2,&B3},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    C2 =
-    {"C2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C3,&C4,&C5,&C6,&C7,&C8,&C9,&A2,&B2,
-        &D2,&E2,&F2,&G2,&H2,&I2,&A1,&A3,&B1,&B3},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    C3 =
-    {"C3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C4,&C5,&C6,&C7,&C8,&C9,&A3,&B3,
-        &D3,&E3,&F3,&G3,&H3,&I3,&A1,&A2,&B1,&B2},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&A1,&B1,&C1,&A2,&B2,&C2,&A3,&B3,&C3}
-    };
-
-    C4 =
-    {"C4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C3,&C5,&C6,&C7,&C8,&C9,&A4,&B4,
-        &D4,&E4,&F4,&G4,&H4,&I4,&A5,&A6,&B5,&B6},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    C5 =
-    {"C5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C3,&C4,&C6,&C7,&C8,&C9,&A5,&B5,
-        &D5,&E5,&F5,&G5,&H5,&I5,&A4,&A6,&B4,&B6},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    C6 =
-    {"C6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C3,&C4,&C5,&C7,&C8,&C9,&A6,&B6,
-        &D6,&E6,&F6,&G6,&H6,&I6,&A4,&A5,&B4,&B5},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&A4,&B4,&C4,&A5,&B5,&C5,&A6,&B6,&C6}
-    };
-
-    C7 =
-    {"C7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C8,&C9,&A7,&B7,
-        &D7,&E7,&F7,&G7,&H7,&I7,&A8,&A9,&B8,&B9},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    C8 =
-    {"C8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C9,&A8,&B8,
-        &D8,&E8,&F8,&G8,&H8,&I8,&A7,&A9,&B7,&B9},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    C9 =
-    {"C9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&A9,&B9,
-        &D9,&E9,&F9,&G9,&H9,&I9,&A7,&A8,&B7,&B8},
-        {&C1,&C2,&C3,&C4,&C5,&C6,&C7,&C8,&C9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&A7,&B7,&C7,&A8,&B8,&C8,&A9,&B9,&C9}
-    };
-
-    D1 =
-    {"D1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9,&A1,&B1,
-        &C1,&E1,&F1,&G1,&H1,&I1,&E2,&E3,&F2,&F3},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    D2 =
-    {"D2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D3,&D4,&D5,&D6,&D7,&D8,&D9,&A2,&B2,
-        &C2,&E2,&F2,&G2,&H2,&I2,&E1,&E3,&F1,&F3},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    D3 =
-    {"D3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D4,&D5,&D6,&D7,&D8,&D9,&A3,&B3,
-        &C3,&E3,&F3,&G3,&H3,&I3,&E1,&E2,&F1,&F2},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    D4 =
-    {"D4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D3,&D5,&D6,&D7,&D8,&D9,&A4,&B4,
-        &C4,&E4,&F4,&G4,&H4,&I4,&E5,&E6,&F5,&F6},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    D5 =
-    {"D5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D3,&D4,&D6,&D7,&D8,&D9,&A5,&B5,
-        &C5,&E5,&F5,&G5,&H5,&I5,&E4,&E6,&F4,&F6},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    D6 =
-    {"D6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D3,&D4,&D5,&D7,&D8,&D9,&A6,&B6,
-        &C6,&E6,&F6,&G6,&H6,&I6,&E4,&E5,&F4,&F5},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    D7 =
-    {"D7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D8,&D9,&A7,&B7,
-        &C7,&E7,&F7,&G7,&H7,&I7,&E8,&E9,&F8,&F9},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    D8 =
-    {"D8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D9,&A8,&B8,
-        &C8,&E8,&F8,&G8,&H8,&I8,&E7,&E9,&F7,&F9},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    D9 =
-    {"D9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&A9,&B9,
-        &C9,&E9,&F9,&G9,&H9,&I9,&E7,&E8,&F7,&F8},
-        {&D1,&D2,&D3,&D4,&D5,&D6,&D7,&D8,&D9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    E1 =
-    {"E1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9,&A1,&B1,
-        &C1,&D1,&F1,&G1,&H1,&I1,&D2,&D3,&F2,&F3},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    E2 =
-    {"E2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E3,&E4,&E5,&E6,&E7,&E8,&E9,&A2,&B2,
-        &C2,&D2,&F2,&G2,&H2,&I2,&D1,&D3,&F1,&F3},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    E3 =
-    {"E3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E4,&E5,&E6,&E7,&E8,&E9,&A3,&B3,
-        &C3,&D3,&F3,&G3,&H3,&I3,&D1,&D2,&F1,&F2},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    E4 =
-    {"E4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E3,&E5,&E6,&E7,&E8,&E9,&A4,&B4,
-        &C4,&D4,&F4,&G4,&H4,&I4,&D5,&D6,&F5,&F6},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    E5 =
-    {"E5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E3,&E4,&E6,&E7,&E8,&E9,&A5,&B5,
-        &C5,&D5,&F5,&G5,&H5,&I5,&D4,&D6,&F4,&F6},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    E6 =
-    {"E6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E3,&E4,&E5,&E7,&E8,&E9,&A6,&B6,
-        &C6,&D6,&F6,&G6,&H6,&I6,&D4,&D5,&F4,&F5},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    E7 =
-    {"E7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E8,&E9,&A7,&B7,
-        &C7,&D7,&F7,&G7,&H7,&I7,&D8,&D9,&F8,&F9},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    E8 =
-    {"E8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E9,&A8,&B8,
-        &C8,&D8,&F8,&G8,&H8,&I8,&D7,&D9,&F7,&F9},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    E9 =
-    {"E9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&A9,&B9,
-        &C9,&D9,&F9,&G9,&H9,&I9,&D7,&D8,&F7,&F8},
-        {&E1,&E2,&E3,&E4,&E5,&E6,&E7,&E8,&E9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    F1 =
-    {"F1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9,&A1,&B1,
-        &C1,&D1,&E1,&G1,&H1,&I1,&D2,&D3,&E2,&E3},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    F2 =
-    {"F2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F3,&F4,&F5,&F6,&F7,&F8,&F9,&A2,&B2,
-        &C2,&D2,&E2,&G2,&H2,&I2,&D1,&D3,&E1,&E3},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    F3 =
-    {"F3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F4,&F5,&F6,&F7,&F8,&F9,&A3,&B3,
-        &C3,&D3,&E3,&G3,&H3,&I3,&D1,&D2,&E1,&E2},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&D1,&E1,&F1,&D2,&E2,&F2,&D3,&E3,&F3}
-    };
-
-    F4 =
-    {"F4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F3,&F5,&F6,&F7,&F8,&F9,&A4,&B4,
-        &C4,&D4,&E4,&G4,&H4,&I4,&D5,&D6,&E5,&E6},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    F5 =
-    {"F5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F3,&F4,&F6,&F7,&F8,&F9,&A5,&B5,
-        &C5,&D5,&E5,&G5,&H5,&I5,&D4,&D6,&E4,&E6},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    F6 =
-    {"F6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F3,&F4,&F5,&F7,&F8,&F9,&A6,&B6,
-        &C6,&D6,&E6,&G6,&H6,&I6,&D4,&D5,&E4,&E5},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&D4,&E4,&F4,&D5,&E5,&F5,&D6,&E6,&F6}
-    };
-
-    F7 =
-    {"F7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F8,&F9,&A7,&B7,
-        &C7,&D7,&E7,&G7,&H7,&I7,&D8,&D9,&E8,&E9},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    F8 =
-    {"F8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F9,&A8,&B8,
-        &C8,&D8,&E8,&G8,&H8,&I8,&D7,&D9,&E7,&E9},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    F9 =
-    {"F9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&A9,&B9,
-        &C9,&D9,&E9,&G9,&H9,&I9,&D7,&D8,&E7,&E8},
-        {&F1,&F2,&F3,&F4,&F5,&F6,&F7,&F8,&F9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&D7,&E7,&F7,&D8,&E8,&F8,&D9,&E9,&F9}
-    };
-
-    G1 =
-    {"G1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9,&A1,&B1,
-        &C1,&D1,&E1,&F1,&H1,&I1,&H2,&H3,&I2,&I3},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    G2 =
-    {"G2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G3,&G4,&G5,&G6,&G7,&G8,&G9,&A2,&B2,
-        &C2,&D2,&E2,&F2,&H2,&I2,&H1,&H3,&I1,&I3},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    G3 =
-    {"G3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G4,&G5,&G6,&G7,&G8,&G9,&A3,&B3,
-        &C3,&D3,&E3,&F3,&H3,&I3,&H1,&H2,&I1,&I2},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    G4 =
-    {"G4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G3,&G5,&G6,&G7,&G8,&G9,&A4,&B4,
-        &C4,&D4,&E4,&F4,&H4,&I4,&H5,&H6,&I5,&I6},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    G5 =
-    {"G5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G3,&G4,&G6,&G7,&G8,&G9,&A5,&B5,
-        &C5,&D5,&E5,&F5,&H5,&I5,&H4,&H6,&I4,&I6},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    G6 =
-    {"G6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G3,&G4,&G5,&G7,&G8,&G9,&A6,&B6,
-        &C6,&D6,&E6,&F6,&H6,&I6,&H4,&H5,&I4,&I5},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    G7 =
-    {"G7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G8,&G9,&A7,&B7,
-        &C7,&D7,&E7,&F7,&H7,&I7,&H8,&H9,&I8,&I9},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    G8 =
-    {"G8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G9,&A8,&B8,
-        &C8,&D8,&E8,&F8,&H8,&I8,&H7,&H9,&I7,&I9},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    G9 =
-    {"G9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&A9,&B9,
-        &C9,&D9,&E9,&F9,&H9,&I9,&H7,&H8,&I7,&I8},
-        {&G1,&G2,&G3,&G4,&G5,&G6,&G7,&G8,&G9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    H1 =
-    {"H1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9,&A1,&B1,
-        &C1,&D1,&E1,&F1,&G1,&I1,&G2,&G3,&I2,&I3},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    H2 =
-    {"H2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H3,&H4,&H5,&H6,&H7,&H8,&H9,&A2,&B2,
-        &C2,&D2,&E2,&F2,&G2,&I2,&G1,&G3,&I1,&I3},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    H3 =
-    {"H3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H4,&H5,&H6,&H7,&H8,&H9,&A3,&B3,
-        &C3,&D3,&E3,&F3,&G3,&I3,&G1,&G2,&I1,&I2},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    H4 =
-    {"H4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H3,&H5,&H6,&H7,&H8,&H9,&A4,&B4,
-        &C4,&D4,&E4,&F4,&G4,&I4,&G5,&G6,&I5,&I6},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    H5 =
-    {"H5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H3,&H4,&H6,&H7,&H8,&H9,&A5,&B5,
-        &C5,&D5,&E5,&F5,&G5,&I5,&G4,&G6,&I4,&I6},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    H6 =
-    {"H6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H3,&H4,&H5,&H7,&H8,&H9,&A6,&B6,
-        &C6,&D6,&E6,&F6,&G6,&I6,&G4,&G5,&I4,&I5},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    H7 =
-    {"H7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H8,&H9,&A7,&B7,
-        &C7,&D7,&E7,&F7,&G7,&I7,&G8,&G9,&I8,&I9},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    H8 =
-    {"H8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H9,&A8,&B8,
-        &C8,&D8,&E8,&F8,&G8,&I8,&G7,&G9,&I7,&I9},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    H9 =
-    {"H9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&A9,&B9,
-        &C9,&D9,&E9,&F9,&G9,&I9,&G7,&G8,&I7,&I8},
-        {&H1,&H2,&H3,&H4,&H5,&H6,&H7,&H8,&H9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    I1 =
-    {"I1",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9,&A1,&B1,
-        &C1,&D1,&E1,&F1,&G1,&H1,&G2,&G3,&H2,&H3},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A1,&B1,&C1,&D1,&E1,&F1,&G1,&H1,&I1},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    I2 =
-    {"I2",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I3,&I4,&I5,&I6,&I7,&I8,&I9,&A2,&B2,
-        &C2,&D2,&E2,&F2,&G2,&H2,&G1,&G3,&H1,&H3},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A2,&B2,&C2,&D2,&E2,&F2,&G2,&H2,&I2},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    I3 =
-    {"I3",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I4,&I5,&I6,&I7,&I8,&I9,&A3,&B3,
-        &C3,&D3,&E3,&F3,&G3,&H3,&G1,&G2,&H1,&H2},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A3,&B3,&C3,&D3,&E3,&F3,&G3,&H3,&I3},
-        {&G1,&H1,&I1,&G2,&H2,&I2,&G3,&H3,&I3}
-    };
-
-    I4 =
-    {"I4",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I3,&I5,&I6,&I7,&I8,&I9,&A4,&B4,
-        &C4,&D4,&E4,&F4,&G4,&H4,&G5,&G6,&H5,&H6},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A4,&B4,&C4,&D4,&E4,&F4,&G4,&H4,&I4},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    I5 =
-    {"I5",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I3,&I4,&I6,&I7,&I8,&I9,&A5,&B5,
-        &C5,&D5,&E5,&F5,&G5,&H5,&G4,&G6,&H4,&H6},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A5,&B5,&C5,&D5,&E5,&F5,&G5,&H5,&I5},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    I6 =
-    {"I6",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I3,&I4,&I5,&I7,&I8,&I9,&A6,&B6,
-        &C6,&D6,&E6,&F6,&G6,&H6,&G4,&G5,&H4,&H5},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A6,&B6,&C6,&D6,&E6,&F6,&G6,&H6,&I6},
-        {&G4,&H4,&I4,&G5,&H5,&I5,&G6,&H6,&I6}
-    };
-
-    I7 =
-    {"I7",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I8,&I9,&A7,&B7,
-        &C7,&D7,&E7,&F7,&G7,&H7,&G8,&G9,&H8,&H9},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A7,&B7,&C7,&D7,&E7,&F7,&G7,&H7,&I7},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    I8 =
-    {"I8",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I9,&A8,&B8,
-        &C8,&D8,&E8,&F8,&G8,&H8,&G7,&G9,&H7,&H9},
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&I9},
-        {&A8,&B8,&C8,&D8,&E8,&F8,&G8,&H8,&I8},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    I9 =
-    {"I9",{1,2,3,4,5,6,7,8,9},0,false,
-        {&I1,&I2,&I3,&I4,&I5,&I6,&I7,&I8,&A9,&B9,
-        &C9,&D9,&E9,&F9,&G9,&H9,&G7,&G8,&H7,&H8},
-        {&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8,&A9},
-        {&A9,&B9,&C9,&D9,&E9,&F9,&G9,&H9,&I9},
-        {&G7,&H7,&I7,&G8,&H8,&I8,&G9,&H9,&I9}
-    };
-
-    //Start solution measurement for constraint_propagation timer:
-    //=====================================================
-    // startTimeConstrPropSolving = std::chrono::high_resolution_clock::now();
-    //=====================================================
-
-    // Performs Rule 1 of Constraint Propagation:
+    // Perform Rule 1 of Constraint Propagation:
     //(1) If a square has only one possible value, then eliminate that value from the square's peers.
     //============================
     InitilizeSudokuSquareMatrix();
     //============================
 
-    // Performs Rule 2 of Constraint Propagation:
+    // Perform Rule 2 of Constraint Propagation:
     //(2) If a unit has only one possible place for a value, then put the value there.
-    //================================ 
+    //================================
     TraverseSudokuSquareMatrixUnits();
     //================================
 
-    //Stop solution measurement for constraint_propagation timer:
-    //=====================================================
-    // stopTimeConstrPropSolving = std::chrono::high_resolution_clock::now();
-    //=====================================================
-
-    //Calulate duration of constraint_propagation calculations (microseconds). 
-    //========================================================================
-}
-
-SudokuGrid::~SudokuGrid()
-//=======================
-{
-    // std::cout << "\nIn the destructor of class SudokuGrid!" << std::endl << std::endl;
-
-    if (SudokuGridSolved()){
+    if (SudokuGridSolved())
+    {
         //=========================================
         // Contraint propagation solved the puzze.
         //=========================================
         std::cout << "The SudokuGrid was solved using Constraint Propagation!\n";
-
-        //===============================
-        // Time spent to solved the puzze.
-        //===============================
-        // auto durationCP = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeConstrPropSolving - startTimeConstrPropSolving);
-        // std::cout << "Time of Constraint Propagation execution: " << durationCP.count() << " microseconds\n" << std::endl;
-    }else
+    }
+    else
     {
-        // Start solution measurement for brute force timer:
-        //=====================================================
-        // startTimeBruteForcelving = std::chrono::high_resolution_clock::now();
-        //=====================================================
-
         //================
         applyBruteForce();
         //================
 
-        // Stop solution measurement for brute force timer:
-        //=================================================
-        // stopTimeBruteForcelving = std::chrono::high_resolution_clock::now();
-        //=================================================
-
-        if (SudokuGridSolved()){
+        if (SudokuGridSolved())
+        {
             //========================================
             // Search (brute force) solved the puzzle.
             //========================================
             std::cout << "The SudokuGrid was solved using Brute Force!\n";
-
-            //===============================
-            // Time spent to solved the puzze.
-            //===============================
-            // auto durationCP = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeConstrPropSolving - startTimeConstrPropSolving);
-            // std::cout << "Time of Constraint Propagation execution: " << durationCP.count() << " microseconds" << std::endl;
-            // auto durationBF = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeBruteForcelving - startTimeBruteForcelving);
-            // std::cout << "Time of Bruce Force execution: " << durationBF.count() << " microseconds" << std::endl;
-
-        } else {
+        }
+        else
+        {
             //===============================================
             std::cout << "The SudokuGrid is NOT SOLVABLE!\n";
             //===============================================
-            //===============================================
-            // Time spent when trying to to solved the puzze.
-            //===============================================
-            // auto durationCP = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeConstrPropSolving - startTimeConstrPropSolving);
-            // std::cout << "Time of Constraint Propagation execution: " << durationCP.count() << " microseconds\n" << std::endl;
-            // auto durationBF = std::chrono::duration_cast<std::chrono::microseconds>(stopTimeBruteForcelving - startTimeBruteForcelving);
-            // std::cout << "Time of Bruce Force execution: " << durationBF.count() << " microseconds\n" << std::endl;
         }
     }
 
@@ -846,6 +66,100 @@ SudokuGrid::~SudokuGrid()
     std::cout << "(Possible Remaining Guesses After Constraint Propagation)\n";
     std::cout << "=============================================================\n";
     PrintsquareMatrixHypos();
+}
+
+SudokuGrid::SudokuGrid()
+//======================
+{
+    // std::cout << "\nIn the constructor of class SudokuGrid!" << std::endl << std::endl;
+
+    SudokuGrid::InitilizeSquare("A1",0,0);
+    SudokuGrid::InitilizeSquare("A2",0,1);
+    SudokuGrid::InitilizeSquare("A3",0,2);
+    SudokuGrid::InitilizeSquare("A4",0,3);
+    SudokuGrid::InitilizeSquare("A5",0,4);
+    SudokuGrid::InitilizeSquare("A6",0,5);
+    SudokuGrid::InitilizeSquare("A7",0,6);
+    SudokuGrid::InitilizeSquare("A8",0,7);
+    SudokuGrid::InitilizeSquare("A9",0,8);
+    SudokuGrid::InitilizeSquare("B1",1,0);
+    SudokuGrid::InitilizeSquare("B2",1,1);
+    SudokuGrid::InitilizeSquare("B3",1,2);
+    SudokuGrid::InitilizeSquare("B4",1,3);
+    SudokuGrid::InitilizeSquare("B5",1,4);
+    SudokuGrid::InitilizeSquare("B6",1,5);
+    SudokuGrid::InitilizeSquare("B7",1,6);
+    SudokuGrid::InitilizeSquare("B8",1,7);
+    SudokuGrid::InitilizeSquare("B9",1,8);
+    SudokuGrid::InitilizeSquare("C1",2,0);
+    SudokuGrid::InitilizeSquare("C2",2,1);
+    SudokuGrid::InitilizeSquare("C3",2,2);
+    SudokuGrid::InitilizeSquare("C4",2,3);
+    SudokuGrid::InitilizeSquare("C5",2,4);
+    SudokuGrid::InitilizeSquare("C6",2,5);
+    SudokuGrid::InitilizeSquare("C7",2,6);
+    SudokuGrid::InitilizeSquare("C8",2,7);
+    SudokuGrid::InitilizeSquare("C9",2,8);
+    SudokuGrid::InitilizeSquare("D1",3,0);
+    SudokuGrid::InitilizeSquare("D2",3,1);
+    SudokuGrid::InitilizeSquare("D3",3,2);
+    SudokuGrid::InitilizeSquare("D4",3,3);
+    SudokuGrid::InitilizeSquare("D5",3,4);
+    SudokuGrid::InitilizeSquare("D6",3,5);
+    SudokuGrid::InitilizeSquare("D7",3,6);
+    SudokuGrid::InitilizeSquare("D8",3,7);
+    SudokuGrid::InitilizeSquare("D9",3,8);
+    SudokuGrid::InitilizeSquare("E1",4,0);
+    SudokuGrid::InitilizeSquare("E2",4,1);
+    SudokuGrid::InitilizeSquare("E3",4,2);
+    SudokuGrid::InitilizeSquare("E4",4,3);
+    SudokuGrid::InitilizeSquare("E5",4,4);
+    SudokuGrid::InitilizeSquare("E6",4,5);
+    SudokuGrid::InitilizeSquare("E7",4,6);
+    SudokuGrid::InitilizeSquare("E8",4,7);
+    SudokuGrid::InitilizeSquare("E9",4,8);
+    SudokuGrid::InitilizeSquare("F1",5,0);
+    SudokuGrid::InitilizeSquare("F2",5,1);
+    SudokuGrid::InitilizeSquare("F3",5,2);
+    SudokuGrid::InitilizeSquare("F4",5,3);
+    SudokuGrid::InitilizeSquare("F5",5,4);
+    SudokuGrid::InitilizeSquare("F6",5,5);
+    SudokuGrid::InitilizeSquare("F7",5,6);
+    SudokuGrid::InitilizeSquare("F8",5,7);
+    SudokuGrid::InitilizeSquare("F9",5,8);
+    SudokuGrid::InitilizeSquare("G1",6,0);
+    SudokuGrid::InitilizeSquare("G2",6,1);
+    SudokuGrid::InitilizeSquare("G3",6,2);
+    SudokuGrid::InitilizeSquare("G4",6,3);
+    SudokuGrid::InitilizeSquare("G5",6,4);
+    SudokuGrid::InitilizeSquare("G6",6,5);
+    SudokuGrid::InitilizeSquare("G7",6,6);
+    SudokuGrid::InitilizeSquare("G8",6,7);
+    SudokuGrid::InitilizeSquare("G9",6,8);
+    SudokuGrid::InitilizeSquare("H1",7,0);
+    SudokuGrid::InitilizeSquare("H2",7,1);
+    SudokuGrid::InitilizeSquare("H3",7,2);
+    SudokuGrid::InitilizeSquare("H4",7,3);
+    SudokuGrid::InitilizeSquare("H5",7,4);
+    SudokuGrid::InitilizeSquare("H6",7,5);
+    SudokuGrid::InitilizeSquare("H7",7,6);
+    SudokuGrid::InitilizeSquare("H8",7,7);
+    SudokuGrid::InitilizeSquare("H9",7,8);
+    SudokuGrid::InitilizeSquare("I1",8,0);
+    SudokuGrid::InitilizeSquare("I2",8,1);
+    SudokuGrid::InitilizeSquare("I3",8,2);
+    SudokuGrid::InitilizeSquare("I4",8,3);
+    SudokuGrid::InitilizeSquare("I5",8,4);
+    SudokuGrid::InitilizeSquare("I6",8,5);
+    SudokuGrid::InitilizeSquare("I7",8,6);
+    SudokuGrid::InitilizeSquare("I8",8,7);
+    SudokuGrid::InitilizeSquare("I9",8,8);
+}
+
+SudokuGrid::~SudokuGrid()
+//=======================
+{
+    // std::cout << "\nIn the destructor of class SudokuGrid!" << std::endl << std::endl;
 }
 
 void SudokuGrid::ReadSudokuStr(std::string SudokuStr)
@@ -873,6 +187,91 @@ void SudokuGrid::ReadSudokuStr(std::string SudokuStr)
     }
 }
 
+void SudokuGrid::InitilizeSquare(std::string ID, int row, int column)
+//====================================================================================
+{
+    square_t *currentSquare = squarematrix[row][column];
+    int boxRow = (row / 3) * 3;
+    int boxColumn = column - (column % 3);
+    int gridBox = 0;
+    int peerNr =0;
+    bool rowPeersDone = false;
+    bool columnPeersDone = false;
+    bool boxPeersDone = false;
+    int dummy;
+
+    currentSquare->ID = ID;
+    currentSquare->possiblevalues = {1,2,3,4,5,6,7,8,9};
+    currentSquare->value = 0;
+    currentSquare->analysefinalized = false;
+    
+    for (size_t gridColumn = 0; gridColumn < N; gridColumn++)
+    {        
+        currentSquare->unit1_row[gridColumn] = squarematrix[row][gridColumn];
+    }
+
+    for (size_t gridRow = 0; gridRow < N; gridRow++)
+    {
+        currentSquare->unit2_colum[gridRow] = squarematrix[gridRow][column];
+    }
+
+    for (size_t boxR = boxRow; boxR < boxRow + 3; boxR++)
+    {
+        for (size_t boxC = boxColumn; boxC < boxColumn + 3; boxC++)
+        {
+            currentSquare->unit3_box[gridBox] = squarematrix[boxC][boxR];
+            gridBox++;
+        }
+    }
+
+    if (!rowPeersDone)
+    {
+        for (size_t gridColumn = 0; gridColumn < N; gridColumn++)
+        {
+            if (column != gridColumn)
+            {
+                currentSquare->peers[peerNr] = currentSquare->unit1_row[gridColumn];
+                peerNr++;
+            }
+        }
+        rowPeersDone = true;
+    }
+
+    if (!columnPeersDone)
+    {
+        for (size_t gridRow = 0; gridRow < N; gridRow++)
+        {
+            if (row != gridRow)
+            {
+                currentSquare->peers[peerNr] = currentSquare->unit2_colum[gridRow];
+                peerNr++;
+            }
+        }
+        columnPeersDone = true;
+    }
+
+    boxRow = (row / 3) * 3;
+    boxColumn = column - (column % 3);
+
+    if (!boxPeersDone)
+    {
+
+        for (size_t boxR = boxRow; boxR < boxRow + 3; boxR++)
+        {
+            for (size_t boxC = boxColumn; boxC < boxColumn + 3; boxC++)
+            {
+                if ((boxR != row) && (boxC != column))
+                {
+                    currentSquare->peers[peerNr] = squarematrix[boxR][boxC];
+                    peerNr++;
+                }
+            }
+        }
+
+        boxPeersDone = true;
+    }
+}
+
 void SudokuGrid::InitilizeSudokuSquareMatrix()
 //============================================
 {
@@ -897,13 +296,12 @@ void SudokuGrid::InitilizeSudokuSquareMatrix()
             }
         }
     }
-
 }
 
-void SudokuGrid::SetInitialSquareValue(squareptr_t square, int value)
+void SudokuGrid::SetInitialSquareValue(squareptr_t &square, int value)
 //===================================================================
 {
-    // int dummy;
+    int dummy;
 
     if (!square->analysefinalized)
     {
@@ -912,30 +310,31 @@ void SudokuGrid::SetInitialSquareValue(squareptr_t square, int value)
         square->possiblevalues.push_back(square->value);
         square->analysefinalized = true;
 
+        // std::cout << "ID: " << square->ID << "\n";
+        // std::cout << "Value: " << square->value << "\n";
+        // std::cout << "Number of Possiblevalued :" << square->possiblevalues.size() << std::endl;
+        // std::cout << std::endl;
+
         for (size_t peernr = 0; peernr < NrOfPeers; peernr++)
         {
-            square->peers[peernr]->possiblevalues.erase(
+            // std::cout << "Peer.ID: " << square->peers[peernr]->ID << "\n";
+            // std::cout << "Peer-Value: " << square->peers[peernr]->value << "\n";
+            // std::cout << "Peer-Number of Possiblevalues :" << square->peers[peernr]->possiblevalues.size() << std::endl;
+
+            if (square->peers[peernr]->possiblevalues.size() == 1)
+            {
+                SetInitialSquareValue(square->peers[peernr],
+                square->peers[peernr]->possiblevalues.front());
+            }
+            else
+            {
+                square->peers[peernr]->possiblevalues.erase(
                 std::remove(square->peers[peernr]->possiblevalues.begin(),
-                            square->peers[peernr]->possiblevalues.end(),
-                            square->value),square->peers[peernr]->possiblevalues.end());
+                square->peers[peernr]->possiblevalues.end(),
+                square->value),square->peers[peernr]->possiblevalues.end());
+            }
         }
     }
-
-    /*
-    std::cout << "\nCurrent layout of SquareMatrix:\n(Working values towards solution of SudokuGrid)\n";
-    std::cout << "========================================\n";
-    PrintsquareMatrixValues();
-
-    std::cout << "ID: " << square->ID << "\n";
-    std::cout << std::endl;
-
-    std::cout << "Current layout of SquareMatrix Hypotesis:\n(Working possiblevalues towards solution of SudokuGrid)\n";
-    std::cout << "==========================================\n";
-    PrintsquareMatrixHypos();
-
-    std::cin >> dummy;
-    */
-
 }
 
 void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
@@ -946,7 +345,7 @@ void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
     {
         if (square->unit1_row[i]->possiblevalues.size() == 1)
         {
-            SetSquareValue(square->unit1_row[i],*square->unit1_row[i]->possiblevalues.begin());
+            SetSquareValue(square->unit1_row[i],square->unit1_row[i]->possiblevalues.front());
         }
     }
 
@@ -954,7 +353,7 @@ void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
     {
         if (square->unit2_colum[i]->possiblevalues.size() == 1)
         {
-            SetSquareValue(square->unit2_colum[i],*square->unit2_colum[i]->possiblevalues.begin());
+            SetSquareValue(square->unit2_colum[i],square->unit2_colum[i]->possiblevalues.front());
         }
     }
 
@@ -962,7 +361,7 @@ void SudokuGrid::InitilizeSquareUnits(squareptr_t square)
    {
        if (square->unit3_box[i]->possiblevalues.size() == 1)
        {
-           SetSquareValue(square->unit3_box[i],*square->unit3_box[i]->possiblevalues.begin());
+           SetSquareValue(square->unit3_box[i],square->unit3_box[i]->possiblevalues.front());
        }
    }
 
@@ -986,15 +385,19 @@ void SudokuGrid::SetSquareValue(squareptr_t square, int value)
         square->analysefinalized = true;
 
         for (size_t peernr = 0; peernr < NrOfPeers; peernr++)
-        {
-            if (square->peers[peernr]->analysefinalized != true)
+        {                     
+            if (square->peers[peernr]->possiblevalues.size() == 1)
+            {
+                SetInitialSquareValue(square->peers[peernr],
+                square->peers[peernr]->possiblevalues.front());
+            }
+            else
             {
                 square->peers[peernr]->possiblevalues.erase(
-                    std::remove(square->peers[peernr]->possiblevalues.begin(),
-                                square->peers[peernr]->possiblevalues.end(),
-                                square->value),
-                    square->peers[peernr]->possiblevalues.end());
-            }
+                std::remove(square->peers[peernr]->possiblevalues.begin(),
+                square->peers[peernr]->possiblevalues.end(),
+                square->value),square->peers[peernr]->possiblevalues.end());
+            }           
         }
     }
 
@@ -1011,6 +414,7 @@ void SudokuGrid::SetSquareValue(squareptr_t square, int value)
 
     std::cin >> dummy;
 */
+
 }
 
 void SudokuGrid::TraverseSudokuSquareMatrixUnits()
@@ -1076,14 +480,6 @@ void SudokuGrid::TraverseUnit(squareptr_t *unit)
         }
     }
 
-    /*
-    std::cout << "\nContent of concatenated possible row values for IDs : \n";
-    // for (auto i = Temp1Vec.cbegin(); i < Temp1Vec.cend(); i++)
-    {
-        std::cout << *i << " ";
-    }
-    */
-
     // std::cout << "\nContent of traversed concatenated possible row values for IDs : \n";
     for (auto i = Tmp2Vec.cbegin(); i < Tmp2Vec.cend(); i++)
     {
@@ -1098,9 +494,6 @@ void SudokuGrid::TraverseUnit(squareptr_t *unit)
             }
         }
     }
-
-    // std::cout << "\n";
-    // std:: cin >> dummy;
 }
 
 void SudokuGrid::PrintMatrix()
