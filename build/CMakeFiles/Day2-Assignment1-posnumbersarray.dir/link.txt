@@ -1,1 +1,0 @@
-/bin/x86_64-linux-gnu-g++-9  -g  -rdynamic CMakeFiles/Day2-Assignment1-posnumbersarray.dir/Day2/Assigment1_Code/posnumbersarray.cpp.o  -o Day2-Assignment1-posnumbersarray 

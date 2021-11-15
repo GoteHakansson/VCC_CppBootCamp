@@ -1,1 +1,0 @@
-/bin/x86_64-linux-gnu-g++-9  -g  -rdynamic CMakeFiles/Day1-Assignment2-chiper.dir/Day1/Assignment2_Code/chiper.cpp.o  -o Day1-Assignment2-chiper 

@@ -1,1 +1,0 @@
-/bin/x86_64-linux-gnu-g++-9  -g  -rdynamic CMakeFiles/Miniproject-Sudokusolver.dir/SudokuProject2/sudokusolver.cpp.o CMakeFiles/Miniproject-Sudokusolver.dir/SudokuProject2/sudokuGrid.cpp.o  -o Miniproject-Sudokusolver 

@@ -1,8 +1,0 @@
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/rebuild_cache.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/edit_cache.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/Day2-Assignment2-linkedlist.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/Day2-Assignment1-posnumbersarray.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/Day1-BonusAssignment-GuessNumber.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/Day1-Assignment2-chiper.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/Day1-Assignment1-posnumbers.dir
-/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build/CMakeFiles/Miniproject-Sudokusolver.dir
