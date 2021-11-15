@@ -1,0 +1,104 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "CPPChrashCourse-CmakeConfiguredAssignments",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Day1-Assignment1-posnumbers::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Day1-Assignment1-posnumbers-Debug-a1f5aa47c873733193ed.json",
+					"name" : "Day1-Assignment1-posnumbers",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Day1-Assignment2-chiper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Day1-Assignment2-chiper-Debug-c9c7e30800e3f19e7a71.json",
+					"name" : "Day1-Assignment2-chiper",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Day1-BonusAssignment-GuessNumber::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Day1-BonusAssignment-GuessNumber-Debug-7beaf937b938b553ebd0.json",
+					"name" : "Day1-BonusAssignment-GuessNumber",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Day2-Assignment1-posnumbersarray::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Day2-Assignment1-posnumbersarray-Debug-e9ff51bafd7ceec72317.json",
+					"name" : "Day2-Assignment1-posnumbersarray",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Day2-Assignment2-linkedlist::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Day2-Assignment2-linkedlist-Debug-eecc70a6d53fda73e670.json",
+					"name" : "Day2-Assignment2-linkedlist",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Miniproject-Sudokusolver::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Miniproject-Sudokusolver-Debug-3d94b14b1bd11d42e4b7.json",
+					"name" : "Miniproject-Sudokusolver",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp/build",
+		"source" : "/home/ghakans1/Desktop/altenprojects/PublishedGitHub/VCC_CppBootcamp"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}
