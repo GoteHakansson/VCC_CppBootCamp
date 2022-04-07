@@ -3,9 +3,11 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <map>
 
 using namespace std;
 
+typedef map<string, int> ScoreByName;
 struct GoteRecord_t
 {
     int first = 0;
@@ -15,9 +17,9 @@ struct GoteRecord_t
     string fith = "sss";
 };
 
-GoteRecord_t *function1(string str)
+GoteRecord_t* function1(string str)
 {
-    GoteRecord_t *Gotefunc = new GoteRecord_t;
+    GoteRecord_t* Gotefunc = new GoteRecord_t;
     Gotefunc->fith = str;
     Gotefunc->second[0] = 8;
     return Gotefunc;
@@ -26,9 +28,14 @@ GoteRecord_t *function1(string str)
 int main()
 {
     GoteRecord_t GoteRecord;
-    GoteRecord_t *GoteRecord2;
+    GoteRecord_t* GoteRecord2;
     char tmpchar = ' ';
     int tmpint = 0;
+    ScoreByName GolfRound1;
+
+    GolfRound1["Lisa"]  = 56;
+    GolfRound1["Pia"]   = 81;
+    GolfRound1["Tora"]  = 93;
 
     cout << GoteRecord.fith << std::endl;
     cout << GoteRecord.third << std::endl;
@@ -37,7 +44,14 @@ int main()
     {
         std::cout << "String content (third): " << GoteRecord.third[i] << std::endl;
     }
+    
     size_t i = 0;
+
+    for (map<string,int>::iterator i = GolfRound1.begin();(i != GolfRound1.end());i++)
+    {
+        cout << i->first << " " << i->second << endl;
+    }
+    
 
     tmpchar = GoteRecord.third[i];
 
