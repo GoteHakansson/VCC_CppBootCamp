@@ -6,6 +6,7 @@ int main()
 {
     
     // Added comment
+    //Happens to add another comment here also
 
     unsigned int posNumber = 0;
     int x = 8, y = 9, z = 11;
